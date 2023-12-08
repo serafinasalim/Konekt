@@ -1,0 +1,350 @@
+@{
+    ViewBag.Title = "Attendance";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="page-body">
+    <div class="container-fluid">
+        <div class="page-title">
+            <div class="row">
+                <div class="col-6">
+                    <h3>
+                        Attendance
+                    </h3>
+                </div>
+                <div class="col-6 text-end">
+                    <button type="button" class="btn btn-success btn-icon" onclick="clockIn()"><h6 class="mt-2">Clock In &nbsp<i class="fa fa-plus-square-o"></i><h6></button> 
+                    <button type="button" class="btn btn-danger btn-icon" onclick="clockOut()"><h6 class="mt-2">Clock Out &nbsp<i class="fa fa-plus-square-o"></i><h6></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Container-fluid starts-->
+    <div class="container-fluid">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="mb-3">Profile</h5>
+                    <div class="row">
+                        <div class="col-md-2 col-3" style="text-align: center;">
+                            <img class="img-70 rounded-circle" src="~/assets/images/user/1.jpg" alt="#">
+                        </div>
+                        <div class="col-md-2 col-3">
+                            <div class="row">
+                                <p>NIM</p>
+                            </div>
+                            <div class="row">
+                                <p>Nama</p>
+                            </div>
+                            <div class="row">
+                                <p>Jabatan</p>
+                            </div>
+                        </div>  
+                        <div class="col-md-3 col-6">
+                            <div class="row">
+                                <p id="idk"></p>
+                            </div>
+                            <div class="row">
+                                <p id="nama_karyawan"></p>
+                            </div>
+                            <div class="row">
+                                <p id="pos_karyawan"></p>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6 mt-2">
+                            <label class="form-label" for="bulan">Bulan</label>
+                            <select class="form-select" id="bulan" name="bulan">
+                                <option value="1">January</option>
+                                <option value="2">Februarys</option>
+                                <option value="3">March</option>
+                                <option value="4">April</option>
+                                <option value="5">May</option>
+                                <option value="6">June</option>
+                                <option value="7">July</option>
+                                <option value="8">August</option>
+                                <option value="9">September</option>
+                                <option value="10">October</option>
+                                <option value="11">November</option>
+                                <option value="12" selected>December</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2 col-6 mt-2">
+                            <label class="form-label" for="tahun">Tahun</label>
+                            <select class="form-select" id="tahun" name="tahun">
+                                <option value="2023" selected>2023</option>
+                                <option value="2022">2022</option>
+                                <option value="2021">2021</option>
+                                <option value="2020">2020</option>
+                                <option value="2019">2019</option>
+                                <option value="2018">2018</option>
+                                <option value="2017">2017</option>
+                                <option value="2016">2016</option>
+                                <option value="2015">2015</option>
+                                <option value="2014">2014</option>
+                                <option value="2013">2013</option>
+                            </select>
+                        </div>
+                        <div class="col-12 mt-3">
+                            <button type="button" class="btn btn-primary float-end my-auto" onclick="fetchData2()">Filter</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12 col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="col-12" style="overflow-x: auto;">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th style="text-align: center;">HARI</th>
+                                    <th style="text-align: center;">TANGGAL</th>
+                                    <th style="text-align: center;">MASUK</th>
+                                    <th style="text-align: center;">KELUAR</th>
+                                    <th style="text-align: center;">STATUS</th>
+                                </tr>
+                            </thead>
+                            <tbody id="brstable"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Container-fluid Ends-->
+</div>
+@section Script{
+<script>
+$(document).ready(function () {
+    GetInfo();
+    fetchData();
+
+});
+
+function GetInfo()
+{
+    $.ajax({
+        url: "@Url.Action("GetUserInfo", "Public")",
+        type: 'GET',
+        dataType: 'json',
+        success: function (result) {
+            $('#idk').text(": " + result.nim_user);
+            $('#nama_karyawan').text(": " + result.nama_karyawan);
+            $('#pos_karyawan').text(": " + result.nama_pos);
+        },
+        error: function (error) {
+            console.error('AJAX request failed:', error);
+        }
+    });
+}
+
+function fetchData() {
+    $.ajax({
+        url: "@Url.Action("GetAbsensi", "Employee")", // Ganti "ControllerName" sesuai dengan nama controller kamu
+        type: 'GET',
+        dataType: 'json', // Tentukan tipe data yang diharapkan dari server
+        data: { year: 2023, month: 12, id: @ViewBag.id }, // Sesuaikan parameter yang diperlukan oleh metode C#
+        success: function (data) {
+            // Proses data yang diterima dari server
+            displayData(data);
+        },
+        error: function () {
+            alert('Terjadi kesalahan saat mengambil data.');
+        }
+    });
+}
+
+function fetchData2() {
+    $.ajax({
+        url: "@Url.Action("GetAbsensi", "Employee")", // Ganti "ControllerName" sesuai dengan nama controller kamu
+        type: 'GET',
+        dataType: 'json', // Tentukan tipe data yang diharapkan dari server
+        data: { year: $("#tahun").val(), month: $("#bulan").val(), id: @ViewBag.id }, // Sesuaikan parameter yang diperlukan oleh metode C#
+        success: function (data) {
+            // Proses data yang diterima dari server
+            displayData(data);
+        },
+        error: function () {
+            alert('Terjadi kesalahan saat mengambil data.');
+        }
+    });
+}
+
+function displayData(data) {
+    var row = "";
+    var i = 0;
+    $.each(data, function (index, item) {
+        var dateObject = new Date(item.item1);
+        var day = dateObject.getDate();
+        var month = dateObject.getMonth() + 1; // Ingat, bulan dimulai dari 0
+        var year = dateObject.getFullYear();
+        var dayOfWeek = dateObject.getDay();
+
+        var jam_in = "";
+        var jam_out = "";
+        var stat = "";
+        var badgeStat = "";
+        if(item.item3 != null){
+            if(item.item3.jam_masuk != null){
+                var raw_data = new Date(item.item3.jam_masuk);
+                var jam = raw_data.getHours();
+                var menit = raw_data.getMinutes();
+
+                var jamFormatted = (jam < 10) ? '0' + jam : jam;
+                var menitFormatted = (menit < 10) ? '0' + menit : menit;
+
+                jam_in = jamFormatted + ":" + menitFormatted;
+            }
+            if(item.item3.jam_keluar != null){
+                var raw_date = new Date(item.item3.jam_keluar);
+                var jam = raw_date.getHours();
+                var menit = raw_date.getMinutes();
+
+                var jamFormatted = (jam < 10) ? '0' + jam : jam;
+                var menitFormatted = (menit < 10) ? '0' + menit : menit;
+
+                jam_out = jamFormatted + ":" + menitFormatted;
+            }
+            if(item.item3.status != null){
+                stat = item.item3.status;
+
+                if(stat == "T"){
+                    badgeStat = `<span class="badge badge-danger">Terlambat</span>`;
+                }
+                else if(stat == "H"){
+                    badgeStat = `<span class="badge badge-info">Hadir</span>`;
+                }
+                else if(stat == "C"){
+                    badgeStat = `<span class="badge badge-danger">Pulang Cepat</span>`;
+                }
+            }
+        }
+
+        var formattedDateString = `${day.toString().padStart(2, '0')}/${month.toString().padStart(2, '0')}/${year}`;
+        var badgeClass = '';
+        var trClass = '';
+        if (dayOfWeek === 0 || dayOfWeek === 6) {
+            badgeClass = 'badge-danger';
+            trClass="bg-light";
+            jam_out = "Off";
+        } else {
+            badgeClass = 'badge-success';
+        }
+
+        index = i + 1;
+        row += `<tr class="${trClass}">
+                    <td style="text-align: center;"><span class="badge ${badgeClass}">${item.item2}</span></td>
+                    <td style="text-align: center;">${formattedDateString}</td>
+                    <td style="text-align: center;">${jam_in}</td>
+                    <td style="text-align: center;">${jam_out}</td>
+                    <td style="text-align: center;">${badgeStat}</td>
+                </tr>`;
+    });
+    $("#brstable").html(row);
+    $("#brstable").show();
+}
+
+var id = @ViewBag.id;
+function clockIn()
+{
+    Swal.fire({
+        title: 'Clock In',
+        html: 'Yakin melakukan <b>Clock IN</b>?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Ya',
+        cancelButtonText: 'Batal',
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: "@Url.Action("ClockIn", "Employee")",
+                type: "POST",
+                data: {id: id},
+                cache: false,
+                success: function (respon) {
+                    if (respon == 1) {
+                        Swal.fire({
+                            title: 'Clock In Berhasil !',
+                            buttons: false,
+                            timer: 2000,
+                            icon: "success",
+                        });
+                    }
+                    else if (respon == 2){
+                        Swal.fire({
+                            title: 'Anda Sudah Clock In Hari Ini!',
+                            buttons: false,
+                            timer: 2000,
+                            icon: "error",
+                        });
+                    }
+                },
+                error: function (error) {
+                    Swal.fire({
+                        title: 'Data gagal diproses!',
+                        text: 'Error: ' + JSON.stringify(error),
+                        buttons: false,
+                        icon: "error"
+                    });
+                }
+            });
+        }
+    })
+}
+
+function clockOut()
+{
+    Swal.fire({
+        title: 'Clock Out',
+        html: 'Yakin melakukan <b>Clock OUT</b>?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Ya',
+        cancelButtonText: 'Batal',
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: "@Url.Action("ClockOut", "Employee")",
+                type: "POST",
+                data: {id: id},
+                cache: false,
+                success: function (respon) {
+                    if (respon == 1) {
+                        Swal.fire({
+                            title: 'Clock Out Berhasil !',
+                            buttons: false,
+                            timer: 2000,
+                            icon: "success",
+                        });
+                    }
+                    else if (respon == 2){
+                        Swal.fire({
+                            title: 'Anda Belum Clock In Hari Ini!',
+                            buttons: false,
+                            timer: 2000,
+                            icon: "error",
+                        });
+                    }
+                    else if (respon == 3){
+                        Swal.fire({
+                            title: 'Anda Sudah Clock Out Hari Ini!',
+                            buttons: false,
+                            timer: 2000,
+                            icon: "error",
+                        });
+                    }
+                },
+                error: function (error) {
+                    Swal.fire({
+                        title: 'Data gagal diproses!',
+                        text: 'Error: ' + JSON.stringify(error),
+                        buttons: false,
+                        icon: "error"
+                    });
+                }
+            });
+        }
+    })
+}
+</script>
+}

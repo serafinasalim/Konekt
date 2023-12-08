@@ -1,0 +1,93 @@
+﻿<div class="sidebar-wrapper" sidebar-layout="stroke-svg">
+    <div>
+        <div class="logo-box mt-4" style="text-align: center;">
+            <a asp-controller="Dashboard" asp-action="Index">
+                <img class="img-fluid for-light" src="~/assets/images/logo/konekt.png" alt="">
+                <img style="text-align: center;"class="img-fluid for-dark" src="~/assets/images/logo/konekt_dark.png" alt="">
+            </a>
+            <div class="back-btn"><i class="fa fa-angle-left"></i></div>
+        </div>
+        <div class="logo-icon-wrapper"><a asp-controller="Dashboard" asp-action="Index"><img class="img-fluid" src="~/assets/images/logo/logo-icon.png" alt=""></a></div>
+        <nav class="sidebar-main">
+            <div class="left-arrow" id="left-arrow"><i data-feather="arrow-left"></i></div>
+            <div id="sidebar-menu">
+                <ul class="sidebar-links" id="simple-bar">
+                    <li class="back-btn">
+                        <a asp-controller="Dashboard" asp-action="Index"><img class="img-fluid" src="~/assets/images/logo/logo-icon.png" alt=""></a>
+                        <div class="mobile-back text-end"><span>Back</span><i class="fa fa-angle-right ps-2" aria-hidden="true"></i></div>
+                    </li>
+                    <li class="sidebar-main-title">
+                        <div> 
+                        <h6>HRIS</h6>
+                        </div>
+                    </li>
+
+                    </li>
+                    <li class="sidebar-main-title">
+                        <div>
+                            <h6>General</h6>
+                        </div>
+                    </li>
+                    <li class="sidebar-list">
+                        <a class="sidebar-link sidebar-title link-nav"asp-controller="Dashboard" asp-action="Index">
+                            <span><i data-feather="home"></i>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-main-title">
+                        <div>
+                            <h6>Employee</h6>
+                        </div>
+                    </li>
+                    <li class="sidebar-list">
+                        <a class="sidebar-link sidebar-title link-nav"asp-controller="Employee" asp-action="Attendance">
+                            <span><i data-feather="clock"></i>Attendance</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-list">
+                        <a class="sidebar-link sidebar-title link-nav"asp-controller="Employee" asp-action="Salary">
+                            <span><i data-feather="dollar-sign"></i>Salary</span>
+                        </a>
+                    </li>
+
+                    @if (User.IsInRole("Human Resources"))
+                    {
+                    <li class="sidebar-main-title">
+                        <div>
+                            <h6>Human Resources</h6>
+                        </div>
+                    </li>
+                    <li class="sidebar-list">
+                        <a class="sidebar-link sidebar-title">
+                            <span><i data-feather="hard-drive"></i>Master</span>
+                        </a>
+                        <ul class="sidebar-submenu">
+                            <li><a asp-controller="Master" asp-action="Employee">Employee</a></li>
+                            <li><a asp-controller="Master" asp-action="Position">Position</a></li>
+                        </ul>
+                    </li>
+                    <li class="sidebar-list">
+                        <a class="sidebar-link sidebar-title">
+                            <span><i data-feather="file-text"></i>Laporan</span>
+                        </a>
+                        <ul class="sidebar-submenu">
+                            <li><a asp-controller="Laporan" asp-action="LaporanAbsensi">Absensi</a></li>
+                            <li><a asp-controller="Laporan" asp-action="LaporanGaji">Gaji</a></li>
+                        </ul>
+                    </li>
+                    <li class="sidebar-main-title">
+                        <div>
+                            <h6>Settings</h6>
+                        </div>
+                    </li>
+                    <li class="sidebar-list">
+                        <a class="sidebar-link sidebar-title link-nav"asp-controller="Settings" asp-action="Users">
+                            <span><i data-feather="users"></i>Users</span>
+                        </a>
+                    </li>
+                    }
+                </ul>
+            </div>
+            <div class="right-arrow" id="right-arrow"><i data-feather="arrow-right"></i></div>
+        </nav>
+    </div>
+</div>

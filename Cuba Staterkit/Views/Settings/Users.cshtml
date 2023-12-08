@@ -1,0 +1,420 @@
+@{
+    ViewBag.Title = "Users";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+@section Style{
+
+<link rel="stylesheet" type="text/css" href="~/assets/css/vendors/jsgrid.css">
+<link rel="stylesheet" type="text/css" href="~/assets/css/vendors/animate.css">
+<link rel="stylesheet" type="text/css" href="~/assets/css/vendors/image-cropper.css">
+<link rel="stylesheet" type="text/css" href="~/assets/css/vendors/rating.css">
+<link rel="stylesheet" type="text/css" href="~/assets/css/vendors/scrollable.css">
+<link rel="stylesheet" type="text/css" href="~/assets/css/vendors/aos.css">
+<link rel="stylesheet" type="text/css" href="~/assets/css/vendors/select2.css">
+<link rel="stylesheet" type="text/css" href="~/assets/css/vendors/datatable-extension.css">
+<link rel="stylesheet" type="text/css" href="~/assets/css/vendors/datatables.css">
+
+<link rel="stylesheet" type="text/css" href="~/assets/css/vendors/owlcarousel.css">
+<link rel="stylesheet" type="text/css" href="~/assets/css/vendors/range-slider.css">
+<link rel="stylesheet" type="text/css" href="~/assets/css/vendors/date-picker.css">
+<link rel="stylesheet" type="text/css" href="~/assets/css/vendors/prism.css">
+<link rel="stylesheet" type="text/css" href="~/assets/css/vendors/dropzone.css">
+}
+<div class="page-body">
+    <div class="container-fluid">
+        <div class="page-title">
+            <div class="row">
+                <div class="col-6">
+                    <h3>
+                        User Data
+                    </h3>
+                </div>
+                <div class="col-6 text-end">
+                    <button type="button" class="btn btn-primary btn-icon" onclick="tambah()"><h6 class="mt-2">Tambah &nbsp<i class="fa fa-plus-square-o"></i><h6></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Container-fluid starts-->
+    <div class="container-fluid">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive-sm">
+                        <table id="tabel-pengguna" class="table table-striped table-hover table-responsive">
+                            <thead>
+                                <tr>
+                                    <th style="min-width: 200px;">Username (NIM)</th>
+                                    <th style="min-width: 200px;">Nama Karyawan</th>
+                                    <th style="min-width: 200px;">Hak Akses</th>
+                                    <th style="min-width: 120px;">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Container-fluid Ends-->
+</div>
+
+<!-- MODAL TAMBAH/EDIT -->
+<div class="modal fade" id="modal-tambah" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="judul-modal-tambah">Modal title</h5>
+                <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="form-simpan" class="row gy-1 pt-75 needs-validation" novalidate>
+                <div class="modal-body mx-4">
+                    <div class="col-12 mb-3">
+                        <label class="form-label" for="nim_user">Karyawan <span class="text-danger">*</span></label>
+                        <select class="form-select select2" name="nim_user" id="nim_user" autocomplete="OFF"></select>
+                        <div class="invalid-feedback">Required</div>
+                        <input type="hidden" id="tombol" name="tombol" value="1"/>
+                    </div>
+                    <div class="col-12 mb-3">
+                        <label class="form-label" for="role_user">Hak Akses <span class="text-danger">*</span></label>
+                        <select class="form-select" name="role_user" id="role_user" required autocomplete="OFF">
+                            <option value="" selected disabled>--Pilih Hak Akses--</option>
+                            <option value="Employee">Employee</option>
+                            <option value="Human Resources">Human Resource</option>
+                        </select>
+                        <div class="invalid-feedback">Required</div>
+                    </div>
+                    <div class="col-12 mb-3">
+                        <label class="form-label" for="pass_user">Password <span class="text-danger">*</span></label>
+                        <input type="password" name="pass_user" id="pass_user" class="form-control" placeholder="Password" required autocomplete="OFF"/>
+                        <div class="invalid-feedback">Required</div>
+                    </div>
+
+                    <!-- FOOTER -->
+                    <div class="col-12 mt-4 pt-50">
+                        <button type="submit" id='btn-simpan' class="btn btn-success float-end waves-effect waves-float waves-light">Simpan</button>
+                        <button type="reset" class="btn btn-outline-danger" data-bs-dismiss="modal" aria-label="Close">Batal</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL TAMBAH/EDIT -->
+<div class="modal fade" id="modal-edit" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="judul-modal-edit">Modal title</h5>
+                <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="form-edit" class="row gy-1 pt-75 needs-validation" novalidate>
+                <div class="modal-body mx-4">
+                    <div class="col-12 mb-3">
+                        <label class="form-label" for="nim_user">Karyawan <span class="text-danger">*</span></label>
+                        <input type="text" id="nama_user" name="nama_user" class="form-control" disabled/>
+                        <input type="hidden" id="id_user" name="id_user"/>
+                        <input type="hidden" id="tombol" name="tombol" value="2"/>
+                    </div>
+                    <div class="col-12 mb-3">
+                        <label class="form-label" for="role_user">Hak Akses <span class="text-danger">*</span></label>
+                        <select class="form-select" name="role_user2" id="role_user2" required autocomplete="OFF">
+                            <option value="" selected disabled>--Pilih Hak Akses--</option>
+                            <option value="Employee">Employee</option>
+                            <option value="Human Resources">Human Resource</option>
+                        </select>
+                        <div class="invalid-feedback">Required</div>
+                    </div>
+                    <div class="col-12 mb-3">
+                        <label class="form-label" for="pass_user">Password <span class="text-danger">*</span></label>
+                        <input type="password" name="pass_user2" id="pass_user2" class="form-control" placeholder="Password" required autocomplete="OFF"/>
+                        <div class="invalid-feedback">Required</div>
+                    </div>
+
+                    <!-- FOOTER -->
+                    <div class="col-12 mt-4 pt-50">
+                        <button type="submit" id='btn-simpan' class="btn btn-success float-end waves-effect waves-float waves-light">Simpan</button>
+                        <button type="reset" class="btn btn-outline-danger" data-bs-dismiss="modal" aria-label="Close">Batal</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Script{
+<script>
+$(document).ready(function () {
+    loadData();
+    get_karyawan();
+    $("form-simpan").validate();
+});
+
+function loadData()
+{
+    $("#tabel-pengguna").DataTable().destroy();
+    $("#tabel-pengguna").DataTable({
+        processing: true, // for show progress bar
+        serverSide: true, // for process server side
+        filter: true, // this is for disable filter (search box)
+        orderMulti: false, // for disable multiple column at once
+        order: [[0, "asc"]],
+        ajax: {
+            url: "@Url.Action("GetUser", "Settings")",
+            type: "GET",
+            datatype: "json",
+            data: function(d){
+                d.page = Math.ceil(d.start / d.length) + 1; // currentPage
+                d.page_size = d.length; // pageSize (10, 25, 50, 100)
+
+                var columnIndex = d.order[0].column; // Get the column index being sorted
+                d.sortColumn = d.columns[columnIndex].data; // Get the column name
+
+                d.sortOrder = d.order[0].dir; // Get the sort order (asc or desc)
+
+                d.search = d.search.value;
+
+                // Remove the default DataTables parameters
+                delete d.draw;
+                delete d.start;
+                delete d.length;
+                delete d.columns;
+                delete d.order;
+                delete d._;
+            },
+            error: function (xhr, error, code) {
+                location.reload();
+            }
+        },
+        language:{
+            paginate:{
+                // remove previous & next text from pagination
+                // previous: '&nbsp;',
+                // next: '&nbsp;'
+            }
+        },
+        columns: [
+            { data: 'username', name: 'username', "autoWidth": false },
+            { data: 'employee_name', name: 'employee_name', "autoWidth": false },
+            { data: 'role', name: 'role', "autoWidth": false },
+            { 
+                data: '', name: '', "autoWidth": false, "orderable": false,
+                mRender: function (data, type, row) {
+                    return `
+                        <button class='btn btn-warning' title='Edit' onclick='edit(
+                            "${row.user_id}",
+                            "${encodeURIComponent(row.employee_name)} ( ${encodeURIComponent(row.username)} )",
+                            "${encodeURIComponent(row.role)}",
+                            "${encodeURIComponent(row.password)}"
+                        )'><i class="fa fa-pencil-square-o""></i></button>
+                        <button class='btn btn-danger' title='Delete' onclick='hapus(
+                            "${row.user_id}",
+                            "${encodeURIComponent(row.employee_name)} ( ${encodeURIComponent(row.username)} )"
+                        )'><i class="fa fa-trash-o"></i></button>`
+                }
+            }
+        ]
+    });
+}
+
+function tambah()
+{
+    // $('#form-simpan').validate().resetForm();
+    // $('.form-control, .form-select').removeClass("error");
+    $('#form-simpan').trigger('reset').removeClass('was-validated');
+    $('#judul-modal-tambah').text("Tambah Data Karyawan");
+    $('#tombol').val("1");
+
+    $("#modal-tambah").modal("show");
+}
+
+$('#form-simpan').submit(function (e) {
+    e.preventDefault();
+    var reportValidity = $('#form-simpan')[0].reportValidity();
+   
+    if(reportValidity){
+        var formData = $('#form-simpan').serialize();
+
+        $.ajax({
+            url: "@Url.Action("SimpanUser", "Settings")",
+            type: "POST",
+            data: $('#form-simpan').serialize(),
+            cache: false,
+            success: function (respon) {
+                if (respon == 1) {
+                    Swal.fire({
+                        title: 'Data Pengguna Berhasil Ditambahkan!',
+                        buttons: false,
+                        timer: 1500,
+                        icon: "success",
+                    }).then(function(){
+                        loadData();
+                        $("#modal-tambah").modal("hide");
+                    });
+                }
+                else if (respon == 2) {
+                    Swal.fire({
+                        title: 'Data Pengguna Berhasil Diubah!',
+                        buttons: false,
+                        timer: 1500,
+                        icon: "success",
+                    }).then(function(){
+                        loadData();
+                        $("#modal-tambah").modal("hide");
+                    });
+                }
+            },
+            error: function (error) {
+                Swal.fire({
+                    title: 'Data gagal diproses!',
+                    text: 'Error: ' + JSON.stringify(error),
+                    buttons: false,
+                    timer: 3000,
+                    icon: "error",
+                });
+            }
+        }); 
+    }
+});
+
+function edit(id, nama, hak, pass)
+{
+    console.log(decodeURIComponent(hak));
+    console.log(decodeURIComponent(pass));
+
+    $('#form-edit').trigger('reset').removeClass('was-validated');
+    $('#tombol').val("2");
+    $('#judul-modal-edit').text("Edit Data Pengguna");
+
+    $("#id_user").val(id); 
+    $("#nama_user").val(decodeURIComponent(nama)); 
+    $("#role_user2").val(decodeURIComponent(hak));
+    $("#pass_user2").val(decodeURIComponent(pass));
+
+    $("#modal-edit").modal("show");
+}
+
+$('#form-edit').submit(function (e) {
+    e.preventDefault();
+    var reportValidity = $('#form-edit')[0].reportValidity();
+   
+    if(reportValidity){
+        var formData = $('#form-edit').serialize();
+
+        $.ajax({
+            url: "@Url.Action("SimpanUser", "Settings")",
+            type: "POST",
+            data: $('#form-edit').serialize(),
+            cache: false,
+            success: function (respon) {
+                if (respon == 1) {
+                    Swal.fire({
+                        title: 'Data Pengguna Berhasil Ditambahkan!',
+                        buttons: false,
+                        timer: 1500,
+                        icon: "success",
+                    }).then(function(){
+                        loadData();
+                        $("#modal-tambah").modal("hide");
+                    });
+                }
+                else if (respon == 2) {
+                    Swal.fire({
+                        title: 'Data Pengguna Berhasil Diubah!',
+                        buttons: false,
+                        timer: 1500,
+                        icon: "success",
+                    }).then(function(){
+                        loadData();
+                        $("#modal-tambah").modal("hide");
+                    });
+                }
+            },
+            error: function (error) {
+                Swal.fire({
+                    title: 'Data gagal diproses!',
+                    text: 'Error: ' + JSON.stringify(error),
+                    buttons: false,
+                    timer: 3000,
+                    icon: "error",
+                });
+            }
+        }); 
+    }
+});
+
+function hapus(id, nama)
+{
+    Swal.fire({
+        title: 'Hapus Data',
+        html: 'Yakin menghapus <b>' + decodeURIComponent(nama) + '</b>?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#DD3333',
+        confirmButtonText: 'Hapus',
+        cancelButtonText: 'Batal',
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: "@Url.Action("HapusUser", "Settings")",
+                type: "POST",
+                data: {id: id},
+                cache: false,
+                success: function (respon) {
+                    if (respon == 1) {
+                        Swal.fire({
+                            title: 'Data Pengguna Berhasil Dihapus!',
+                            buttons: false,
+                            timer: 2000,
+                            icon: "success",
+                        }).then(function(){
+                            loadData();
+                        });
+                    }
+                },
+                error: function (error) {
+                    Swal.fire({
+                        title: 'Data gagal diproses!',
+                        text: 'Error: ' + JSON.stringify(error),
+                        buttons: false,
+                        icon: "error"
+                    });
+                }
+            });
+        }
+    })
+}
+
+function get_karyawan()
+{
+    $("#nim_user").select2({
+        width: 'resolve',   // to adjust proper width of select2 wrapped elements
+        allowClear: true,
+        placeholder: "--Pilih Karyawan--",
+        dropdownParent: $("#modal-tambah"),
+        ajax: {
+            url: "@Url.Action("GetDropdownNim", "Settings")", // Controller - Select2Demo and Action -AccessRemoteData
+            type: "GET",
+            dataType: 'json',
+            data: function (params) {
+                return {
+                    term: params.term
+                };
+            },
+            processResults: function (data) {
+                return {
+                    results: data.resultList
+                };
+            }
+        }
+    });
+}
+
+</script>
+}

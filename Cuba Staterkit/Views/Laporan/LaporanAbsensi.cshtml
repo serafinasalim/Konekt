@@ -1,0 +1,148 @@
+@{
+    ViewBag.Title = "Laporan Absensi";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="page-body">
+    <div class="container-fluid">
+        <div class="page-title">
+            <div class="row">
+                <div class="col-6">
+                    <h3>
+                        Laporan Absensi
+                    </h3>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Container-fluid starts-->
+    <div class="container-fluid">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="mb-3">Filter</h5>
+                    <form id="form-simpan">
+                        <div class="row">
+                            <div class="col-md-3 col-12 mt-2">
+                                <label class="form-label" for="bulan">Bulan</label>
+                                <select class="form-select" id="bulan" name="bulan">
+                                    <option value="" style="text-align: center;" selected disabled>--Pilih Bulan--</option>
+                                    <option value="1">January</option>
+                                    <option value="2">Februarys</option>
+                                    <option value="3">March</option>
+                                    <option value="4">April</option>
+                                    <option value="5">May</option>
+                                    <option value="6">June</option>
+                                    <option value="7">July</option>
+                                    <option value="8">August</option>
+                                    <option value="9">September</option>
+                                    <option value="10">October</option>
+                                    <option value="11">November</option>
+                                    <option value="12">December</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3 col-12 mt-2">
+                                <label class="form-label" for="tahun">Tahun</label>
+                                <select class="form-select" id="tahun" name="tahun">
+                                    <option value="" style="text-align: center;" selected disabled>--Pilih Tahun--</option>
+                                    <option value="2023">2023</option>
+                                    <option value="2022">2022</option>
+                                    <option value="2021">2021</option>
+                                    <option value="2020">2020</option>
+                                    <option value="2019">2019</option>
+                                    <option value="2018">2018</option>
+                                    <option value="2017">2017</option>
+                                    <option value="2016">2016</option>
+                                    <option value="2015">2015</option>
+                                    <option value="2014">2014</option>
+                                    <option value="2013">2013</option>
+                                </select>
+                            </div>
+                            <div class="col-12 mt-3">
+                                <button type="button" id="btn-simpan" onclick="fetchData()" class="btn btn-primary float-end my-auto">Filter</button>
+                                <button type="button" onclick="exportData()" class="btn btn-success float-end my-auto me-2">Export to Excel</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12 col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12" style="overflow-x: auto;">
+                            <table class="table">
+                                <thead class="bg-light">
+                                    <tr>
+                                        <th style="min-width: 100px;">Nama</th>
+                                        <th style="min-width: 100px;">NIM</th>
+                                        <th style="text-align: center; min-width: 40px;">Hadir</th>
+                                        <th style="text-align: center; min-width: 40px;">Terlambat</th>
+                                        <th style="text-align: center; min-width: 40px;">Pulang Cepat</th>
+                                        <th style="text-align: center; min-width: 40px;">Absen</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="brstable">
+                                    
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Container-fluid Ends-->
+</div>
+@section Script{
+<script>
+$(document).ready(function () {
+    
+});
+
+function fetchData() {
+    $.ajax({
+        url: "@Url.Action("GetLaporanAbsensi", "Laporan")", // Ganti "ControllerName" sesuai dengan nama controller kamu
+        type: 'GET',
+        dataType: 'json', // Tentukan tipe data yang diharapkan dari server
+        data: { year: $("#tahun").val(), month: $("#bulan").val() }, // Sesuaikan parameter yang diperlukan oleh metode C#
+        success: function (data) {
+            displayData(data);
+        },
+        error: function () {
+            alert('Terjadi kesalahan saat mengambil data.');
+        }
+    });
+}
+
+function displayData(data) {
+
+    console.log("MASUK PAK")
+    var row = "";
+    var i = 0;
+    $.each(data, function (index, item) {
+        console.log("halo")
+        index = i + 1;
+        row += `<tr>
+                    <td>${item.employeeName}</td>
+                    <td>${item.employeeNIM}</td>
+                    <td style="text-align: center;">${item.totalHadir}</td>
+                    <td style="text-align: center;">${item.totalTelat}</td>
+                    <td style="text-align: center;">${item.totalCepat}</td>
+                    <td style="text-align: center;">${item.totalAbsen}</td>
+                </tr>`;
+    });
+    $("#brstable").html(row);
+    $("#brstable").show();
+}
+
+function exportData()
+{
+    var year = $("#tahun").val();
+    var month = $("#bulan").val();
+
+    window.location.href = "/Konekt/Laporan/ExportLaporanAbsensi?year=" + year + "&month=" + month;
+}
+
+</script>
+}

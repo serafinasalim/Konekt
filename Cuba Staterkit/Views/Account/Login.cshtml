@@ -1,0 +1,108 @@
+@{
+    ViewBag.Title = "Login";
+    Layout = "~/Views/Shared/_SimpleLayout.cshtml";
+}
+
+<div class="row m-0">
+    <div class="col-12 p-0">
+        <div class="login-card">
+            <div>
+                <div><a class="logo" ><img class="img-fluid for-light" src="~/assets/images/logo/konekt.png" alt="looginpage"><img class="img-fluid for-dark" src="~/assets/images/logo/logo_dark.png" alt="looginpage"></a></div>
+                <div class="login-main">
+                    <form class="theme-form needs-validation" id="form-login" novalidate>
+                        <h4>Login to account</h4>
+                        <p>Enter your NIM & password to login</p>
+                        <div class="form-group">
+                            <label class="col-form-label" for="Username">Nomor Induk Mahasiswa</label>
+                            <input class="form-control" id="Username" name="Username" type="text" oninput="this.value = this.value.replace(/[^0-9]/g, '');" pattern="[0-9]{11}" required placeholder="0308XXXXXXX">
+                            <div class="invalid-feedback">11 Digit Required</div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-form-label" for="Password">Password</label>
+                            <div class="form-input position-relative">
+                                <input class="form-control" id="Password" name="Password" type="password" required placeholder="Enter password">
+                                <div class="show-hide"><span class="show"></span></div>
+                                <div class="invalid-feedback">Required</div>
+                            </div>
+                        </div>
+                        <div class="form-group mb-0">
+                            <div class="text-end mt-3">
+                                <button class="btn btn-primary btn-block w-100" type="submit">Login</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Script{
+<script src="~/assets/js/sweet-alert/sweet.init.js"></script>
+<script src="~/assets/js/jquery-3.6.0.min.js"></script>
+<script src="~/assets/js/form-validation-custom.js"></script>
+
+<script>
+$(document).ready(function () {
+    // Toggle password visibility when the show-hide div is clicked
+    $(".show-hide").on("click", function () {
+        var passwordField = $("#Password");
+
+        // Toggle the type attribute
+        if (passwordField.attr("type") === "password") {
+            passwordField.attr("type", "text");
+        } else {
+            passwordField.attr("type", "password");
+        }
+
+        // Toggle the class for styling (optional)
+        $(this).toggleClass("password-shown");
+    });
+
+});
+
+$('#form-login').submit(function (e) {
+e.preventDefault();
+var reportValidity = $('#form-login')[0].reportValidity();
+
+    if(reportValidity){
+        $.ajax({
+            url: "@Url.Action("CheckAccount", "Account")",
+            type: "POST",
+            data: $('#form-login').serialize(),
+            cache: false,
+            success: function (respon) {
+                if (respon == 1) {
+                    Swal.fire({
+                        title: 'Berhasil Login!',
+                        timer: 3000,
+                        icon: "success",
+                        showConfirmButton: false
+                    }).then(function () {
+                        // Redirect to Dashboard
+                        window.location.href = "@Url.Action("Index", "Dashboard")";
+                    });
+                }
+                else {
+                    Swal.fire({
+                        title: 'Invalid NIM Or Password!', 
+                        timer: 3000,
+                        icon: "error",
+                        showConfirmButton: false
+                    });
+                }
+            },
+            error: function (error) {
+                Swal.fire({
+                    title: 'Data gagal diproses!',
+                    text: 'Error: ' + JSON.stringify(error),
+                    buttons: false,
+                    timer: 3000,
+                    icon: "error",
+                });
+            }
+        });
+    }
+});
+</script>
+
+}

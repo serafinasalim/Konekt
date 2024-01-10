@@ -53,7 +53,7 @@ namespace Cuba_Staterkit.Controllers
         {
             int st = 0;
 
-            var oldDB = (from a in db.Account select a.password).FirstOrDefault();
+            var oldDB = (from a in db.Account where a.user_id == id select a.password).FirstOrDefault();
             try
             {
                 if (oldpass == oldDB.ToString())
